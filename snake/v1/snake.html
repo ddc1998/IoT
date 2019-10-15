@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="js/jquery.js" type="text/javascript"></script>
+  <script src="js/csmapi.js"></script>
+  <script src="js/dan.js"></script>
+  <script src="js/dai.js"></script>
+  <script src="js/ida.js"></script>
+  <script src="./js/processing.js"></script>
+  <link rel="stylesheet" href="./css/style.css"/>
+</head>
+<body>
+
+<p>
+<script type="application/processing">
+    float[] x = new float[20];
+    float[] y = new float[20];
+    float segLength = 10;
+    PImage a;
+
+    void setup() {
+        size(640, 480);
+        smooth();
+        a = loadImage("data/dirt.jpg");
+    }
+    
+    void draw() {
+        background(226);
+        image( a, 0, 0 );
+        dragSegment(0, UserX - 8, UserY - 8);
+        for(int i=0; i < x.length-1; i++) {
+          dragSegment(i+1, x[i], y[i]);
+        }
+    }
+
+    void dragSegment(int i, float xin, float yin) {
+        float dx = xin - x[i];
+        float dy = yin - y[i];
+        float angle = atan2(dy, dx);  
+        x[i] = xin - cos(angle) * segLength;
+        y[i] = yin - sin(angle) * segLength;
+        //stroke(23, 79, 4, 220);
+  
+        pushMatrix();
+        translate(x[i], y[i]);
+        rotate(angle);
+  
+        color c;
+  
+        if ( i % 3 == 1 ) c = color(0, 0, 0, 255);
+        else if ( i % 3 == 2 ) c = color(255, 255, 0, 255);
+        else c = color(255, 0, 0, 255);
+
+        stroke( c );
+        strokeWeight(10);
+        line(0, 0, segLength, 0);
+  
+        if ( i == x.length - 1 ){
+          fill( c );
+          noStroke();
+          beginShape(TRIANGLES);
+          vertex(0, 5);
+          vertex(-2 * segLength, 0);
+          vertex(0, -5);
+          endShape();
+        }
+  
+        if ( i == 0 ){
+          // stroke(0, 255);
+          noStroke();
+          fill(0, 255);
+          ellipse(segLength, -2, 3, 3);
+          ellipse(segLength, 2, 3, 3);
+          //point(segLength, -2);
+          //point(segLength, 2);
+        }
+  
+        popMatrix();
+    }
+</script><canvas width="640" height="480"></canvas></p>
+<div style="height:0px;width:0px;overflow:hidden;"><img src="data/dirt.jpg" id="dirt.jpg"/></div>
+
+</body>
+</html>
